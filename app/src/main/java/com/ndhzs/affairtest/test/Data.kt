@@ -14,14 +14,11 @@ sealed interface Data {
 data class Week(
   val week: String,
   val times: List<Time>,
-  var isWrapBefore: Boolean = false
+  var isFold: Boolean = true,
+  var isWrapBefore: Boolean = false,
 ) : Data {
   override val onlyId: Any
     get() = week
-  
-  var isFold: Boolean = true
-  
-  var oldLayoutPosition: Int = -1
 }
 
 data class Time(

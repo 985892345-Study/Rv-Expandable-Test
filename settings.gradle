@@ -12,5 +12,5 @@ dependencyResolutionManagement {
     mavenCentral()
   }
 }
-rootProject.name = "AffairTest"
+rootProject.name = "Rv-Expandable-Test"
 include ':app'

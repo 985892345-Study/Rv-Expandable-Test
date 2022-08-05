@@ -1,6 +1,5 @@
 package com.ndhzs.affairtest.test
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +9,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.ndhzs.affairtest.R
-import java.util.*
 
 /**
  * ...
@@ -29,6 +27,10 @@ class Adapter : ListAdapter<Data, Adapter.VH>(
     override fun areContentsTheSame(oldItem: Data, newItem: Data): Boolean {
       return oldItem == newItem
     }
+  
+    override fun getChangePayload(oldItem: Data, newItem: Data): Any {
+      return "" // 重写这个方法可以在刷新时不使 ViewHolder 互换
+    }
   }
 ) {
   
@@ -40,35 +42,8 @@ class Adapter : ListAdapter<Data, Adapter.VH>(
     init {
       tvWeek.setOnClickListener {
         val data = getItem(layoutPosition) as Week
-        if (data.isFold) {
-          data.isFold = false
-          data.oldLayoutPosition = layoutPosition
-          val newList = currentList.toMutableList()
-          if (layoutPosition + 1 < newList.size) {
-            if (newList[layoutPosition + 1] is Week) {
-              val old = newList.removeAt(layoutPosition + 1)
-              newList.add(layoutPosition + 1, (old as Week).copy(isWrapBefore = true))
-            }
-          }
-          newList.removeAt(layoutPosition)
-          newList.add(0, data)
-          newList.addAll(1, data.times)
-          if (newList.size > 2) {
-            if (newList[1] is Time) {
-              val old = newList.removeAt(1)
-              newList.add(1, (old as Time).copy(isWrapBefore = true))
-            }
-          }
-          submitList(newList)
-        } else {
-          data.isFold = true
-          val newList = currentList.toMutableList()
-          newList.removeAll(data.times)
-          newList.removeAt(0)
-          newList.add(data.oldLayoutPosition, data.copy(isWrapBefore = false))
-          data.oldLayoutPosition = -1
-          submitList(newList)
-        }
+        data.isFold = !data.isFold // 这里只需要修改折叠状态即可
+        submitList(AffairDataUtils.getNewList(currentList))
       }
     }
   }
